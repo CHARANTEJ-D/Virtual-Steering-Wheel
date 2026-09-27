@@ -186,6 +186,39 @@ with vision.HandLandmarker.create_from_options(options) as landmarker:
             )
             print("Steering:", round(steering, 2))
             print("Smoothed steering:", round(smoothed_steering, 2))
+
+        # Draw virtual steering wheel between both wrists
+        if left_wrist_x is not None and right_wrist_x is not None:
+
+            left_wrist_pixel = (
+                int(left_wrist_x * frame.shape[1]),
+                int(left_wrist_y * frame.shape[0])
+            )
+
+            right_wrist_pixel = (
+                int(right_wrist_x * frame.shape[1]),
+                int(right_wrist_y * frame.shape[0])
+            )
+            # Line connecting both hands
+            cv2.line(
+                frame,
+                left_wrist_pixel,
+                right_wrist_pixel,
+                (255, 255, 0),
+                8
+            )
+            # Center of the virtual steering wheel
+            wheel_center = (
+                (left_wrist_pixel[0] + right_wrist_pixel[0]) // 2,
+                (left_wrist_pixel[1] + right_wrist_pixel[1]) // 2
+            )
+            cv2.circle(
+                frame,
+                wheel_center,
+                12,
+                (0, 255, 255),
+                -1
+            )
         if paused:
             smoothed_steering = 0.0
             throttle = 0.0
